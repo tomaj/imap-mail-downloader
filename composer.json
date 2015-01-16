@@ -1,0 +1,21 @@
+{
+  "name": "tomaj/imap-mail-downloader",
+  "description": "IMAP mail downloader",
+  "type": "library",
+  "license": "LGPL",
+  "authors": [
+    {
+      "name": "Tomas Majer",
+      "homepage": "http://tomaj.sk"
+    }
+  ],
+  "require": {
+    "php": ">= 5.3.7"
+  },
+  "minimum-stability": "stable",
+  "autoload": {
+    "classmap": [
+      "src/"
+    ]
+  }
+}
