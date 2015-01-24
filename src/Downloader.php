@@ -39,25 +39,32 @@ class Downloader
 
 		$emails = $this->fetchEmails($mailbox, $criteria);
 
-		foreach ($emails as $emailIndex) {
-
-			$overview = imap_fetch_overview($mailbox, $emailIndex, 0);
-			$message = imap_body($mailbox, $emailIndex);
-
-			$email = new Email($overview, $message);
-
-			$processed = $callback($email);
-
-			if ($processed === true) {
-				$res = imap_mail_move($mailbox, $emailIndex, $this->processedFolder);
-				if (!$res) {
-					throw new Exception("Unexpected error: Cannot move email to ");
-					break;
-				}
+		if ($emails) {
+			foreach ($emails as $emailIndex) {
+				$this->processEmail($mailbox, $emailIndex, $callback);
 			}
 		}
 
 		@imap_close($mailbox);
+	}
+
+	private function processEmail($mailbox, $emailIndex, $callback)
+	{
+		$overview = imap_fetch_overview($mailbox, $emailIndex, 0);
+		$message = imap_body($mailbox, $emailIndex);
+
+		$email = new Email($overview, $message);
+
+		$processed = $callback($email);
+
+		if ($processed === true) {
+			$res = imap_mail_move($mailbox, $emailIndex, $this->processedFolder);
+			if (!$res) {
+				throw new Exception("Unexpected error: Cannot move email to ");
+			}
+		}
+
+		return $processed;
 	}
 
 	private function checkProcessedFolder($mailbox)
