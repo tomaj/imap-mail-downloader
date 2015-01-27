@@ -4,62 +4,67 @@ namespace Tomaj\ImapMailDownloader;
 
 class Email
 {
-	private $from;
+    private $from;
 
-	private $to;
+    private $to;
 
-	private $date;
+    private $date;
 
-	private $messageId;
+    private $messageId;
 
-	private $references;
+    private $references;
 
-	private $inReplyTo;
+    private $inReplyTo;
 
-	private $size;
+    private $size;
 
-	private $uid;
+    private $uid;
 
-	private $msgNo;
+    private $msgNo;
 
-	private $recent;
+    private $recent;
 
-	private $flagged;
+    private $flagged;
 
-	private $answered;
+    private $answered;
 
-	private $deleted;
+    private $deleted;
 
-	private $seen;
+    private $seen;
 
-	private $draft;
+    private $draft;
 
-	private $body;
+    private $body;
 
-	public function __construct($params, $body)
-	{
-		$options = $params[0];
+    public function __construct($params, $body)
+    {
+        $options = $params[0];
 
-		$this->from = $options->from;
-		$this->to = $options->to;
-		$this->date = $options->date;
-		$this->messageId = $options->message_id;
-		if (isset($options->references)) {
-			$this->references = $options->references;
-		}
-		if (isset($options->in_reply_to)) {
-			$this->inReplyTo = $options->in_reply_to;
-		}
-		$this->size = $options->size;
-		$this->uid = $options->uid;
-		$this->msgNo = $options->msgno;
-		$this->recent = $options->recent;
-		$this->flagged = $options->flagged;
-		$this->answered = $options->answered;
-		$this->deleted = $options->deleted;
-		$this->seen = $options->seen;
-		$this->draft = $options->draft;
+        $this->from = $options->from;
+        $this->to = $options->to;
+        $this->date = $options->date;
+        $this->messageId = $options->message_id;
+        if (isset($options->references)) {
+            $this->references = $options->references;
+        }
+        if (isset($options->in_reply_to)) {
+            $this->inReplyTo = $options->in_reply_to;
+        }
+        $this->size = $options->size;
+        $this->uid = $options->uid;
+        $this->msgNo = $options->msgno;
+        $this->recent = $options->recent;
+        $this->flagged = $options->flagged;
+        $this->answered = $options->answered;
+        $this->deleted = $options->deleted;
+        $this->seen = $options->seen;
+        $this->draft = $options->draft;
 
+<<<<<<< HEAD
+        $this->body = $body;
+    }
+}
+=======
 		$this->body = $body;
 	}
 
@@ -190,4 +195,9 @@ class Email
 	{
 		return $this->body;
 	}
+<<<<<<< HEAD
 }
+>>>>>>> 77f71a7... Added mail getters and some changes
+=======
+}
+>>>>>>> 29435f7f692b0c443cd5b854da73110381fc273f
