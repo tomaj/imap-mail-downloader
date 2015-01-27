@@ -60,144 +60,135 @@ class Email
         $this->seen = $options->seen;
         $this->draft = $options->draft;
 
-<<<<<<< HEAD
+
         $this->body = $body;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getFrom()
+    {
+        return $this->from;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTo()
+    {
+        return $this->to;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMessageId()
+    {
+        return $this->messageId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReferences()
+    {
+        return $this->references;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getInReplyTo()
+    {
+        return $this->inReplyTo;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSize()
+    {
+        return $this->size;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUid()
+    {
+        return $this->uid;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMsgNo()
+    {
+        return $this->msgNo;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRecent()
+    {
+        return $this->recent;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFlagged()
+    {
+        return $this->flagged;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAnswered()
+    {
+        return $this->answered;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDeleted()
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSeen()
+    {
+        return $this->seen;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDraft()
+    {
+        return $this->draft;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBody()
+    {
+        return $this->body;
+    }
 }
-=======
-		$this->body = $body;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getFrom()
-	{
-		return $this->from;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getTo()
-	{
-		return $this->to;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getDate()
-	{
-		return $this->date;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getMessageId()
-	{
-		return $this->messageId;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getReferences()
-	{
-		return $this->references;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getInReplyTo()
-	{
-		return $this->inReplyTo;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getSize()
-	{
-		return $this->size;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getUid()
-	{
-		return $this->uid;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getMsgNo()
-	{
-		return $this->msgNo;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getRecent()
-	{
-		return $this->recent;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getFlagged()
-	{
-		return $this->flagged;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getAnswered()
-	{
-		return $this->answered;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getDeleted()
-	{
-		return $this->deleted;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getSeen()
-	{
-		return $this->seen;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getDraft()
-	{
-		return $this->draft;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getBody()
-	{
-		return $this->body;
-	}
-<<<<<<< HEAD
-}
->>>>>>> 77f71a7... Added mail getters and some changes
-=======
-}
->>>>>>> 29435f7f692b0c443cd5b854da73110381fc273f
