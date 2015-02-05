@@ -17,7 +17,7 @@ Instalation
 
 Install package via composer:
 
-```
+``` bash
 $ composer require tomaj/imap-mail-downloader
 ```
 
@@ -26,7 +26,7 @@ Usage
 
 Basic usage in php:
 
-```
+``` php
 use Tomaj\ImapMailDownloader\Downloader;
 use Tomaj\ImapMailDownloader\MailCriteria;
 use Tomaj\ImapMailDownloader\Email;
