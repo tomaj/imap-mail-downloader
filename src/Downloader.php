@@ -2,8 +2,6 @@
 
 namespace Tomaj\ImapMailDownloader;
 
-use Nette\Neon\Exception;
-
 class Downloader
 {
     private $host;
@@ -50,7 +48,7 @@ class Downloader
             if ($processed) {
                 $res = imap_mail_move($mailbox, $emailIndex, $this->processedFolder);
                 if (!$res) {
-                    throw new Exception("Unexpected error: Cannot move email to ");
+                    throw new \Exception("Unexpected error: Cannot move email to ");
                     break;
                 }
             }

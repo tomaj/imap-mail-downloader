@@ -2,7 +2,9 @@
 
 namespace Tomaj\ImapMailDownloader;
 
-class ImapException extends \Exception
+use Exception;
+
+class ImapException extends Exception
 {
 
 }
