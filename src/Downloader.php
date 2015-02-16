@@ -31,8 +31,7 @@ class Downloader
     public function fetch(MailCriteria $criteria, $callback)
     {
         $mailbox = @imap_open('{' . $this->host . ':' . $this->port . '}INBOX', $this->username, $this->password);
-        $lastError = error_get_last();
-        if (!$mailbox || $lastError) {
+        if (!$mailbox) {
             throw new ImapException("Cannot connect to imap server: {$this->host}:{$this->port}'");
         }
 
