@@ -16,7 +16,7 @@ class MailCriteriaTest extends PHPUnit_Framework_TestCase
 	{
 		$criteria = new MailCriteria();
 		$criteria->setFrom('a@a.sk');
-		$this->assertEquals("FROM 'a@a.sk'", $criteria->getSearchString());
+		$this->assertEquals('FROM "a@a.sk"', $criteria->getSearchString());
 	}
 
 	public function testAllCriteria()
@@ -28,6 +28,6 @@ class MailCriteriaTest extends PHPUnit_Framework_TestCase
 		$criteria->setSince('2014-01-05 14:56:11');
 		$criteria->setSubject('my Subject');
 
-		$this->assertEquals("FROM 'b@b.sk' KEYWORD 'testKeyword' UNSEEN SUBJECT 'my Subject' SINCE '2014-01-05 14:56:11'", $criteria->getSearchString());
+		$this->assertEquals('FROM "b@b.sk" KEYWORD "testKeyword" UNSEEN SUBJECT "my Subject" SINCE "2014-01-05 14:56:11"', $criteria->getSearchString());
 	}
 }

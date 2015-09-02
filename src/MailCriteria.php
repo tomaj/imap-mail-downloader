@@ -19,12 +19,12 @@ class MailCriteria
         $parts = array();
         if ($this->from) {
             $from = addslashes($this->from);
-            $parts[] = "FROM '{$from}'";
+            $parts[] = "FROM \"{$from}\"";
         }
 
         if ($this->keyword) {
             $keyword = addslashes($this->keyword);
-            $parts[] = "KEYWORD '{$keyword}'";
+            $parts[] = "KEYWORD \"{$keyword}\"";
         }
 
         if ($this->unseen) {
@@ -33,12 +33,12 @@ class MailCriteria
 
         if ($this->subject) {
             $subject = addslashes($this->subject);
-            $parts[] = "SUBJECT '{$subject}'";
+            $parts[] = "SUBJECT \"{$subject}\"";
         }
 
         if ($this->since) {
             $since = addslashes($this->since);
-            $parts[] = "SINCE '{$since}'";
+            $parts[] = "SINCE \"{$since}\"";
         }
 
         if (count($parts)) {
