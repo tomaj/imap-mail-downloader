@@ -2,7 +2,7 @@
   "name": "tomaj/imap-mail-downloader",
   "description": "IMAP mail downloader",
   "type": "library",
-  "license": "LGPL",
+  "license": "MIT",
   "authors": [
     {
       "name": "Tomas Majer",
