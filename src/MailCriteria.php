@@ -14,6 +14,8 @@ class MailCriteria
 
     protected $since;
 
+    protected $text;
+
     public function getSearchString()
     {
         $parts = array();
@@ -39,6 +41,11 @@ class MailCriteria
         if ($this->since) {
             $since = addslashes($this->since);
             $parts[] = "SINCE \"{$since}\"";
+        }
+
+        if ($this->text) {
+            $text = addslashes($this->text);
+            $parts[] = "TEXT \"{$text}\"";
         }
 
         if (count($parts)) {
@@ -75,6 +82,12 @@ class MailCriteria
     public function setSubject($subject)
     {
         $this->subject = $subject;
+        return $this;
+    }
+
+    public function setText($text)
+    {
+        $this->text = $text;
         return $this;
     }
 }
