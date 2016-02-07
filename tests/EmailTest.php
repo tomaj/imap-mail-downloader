@@ -22,6 +22,7 @@ class EmailTest extends PHPUnit_Framework_TestCase
 		$data->deleted = 0;
 		$data->seen = 1;
 		$data->draft = 1;
+        $data->text = "text";
 
 		$body = 'asf098ywetoiuwhegt908weg ewfg dsyfg089dsyfg';
 

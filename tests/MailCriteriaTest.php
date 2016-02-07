@@ -19,6 +19,13 @@ class MailCriteriaTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('FROM "a@a.sk"', $criteria->getSearchString());
 	}
 
+    public function testText()
+    {
+        $criteria = new MailCriteria();
+        $criteria->setText("test text");
+        $this->assertEquals('TEXT "test text"', $criteria->getSearchString());
+    }
+
 	public function testAllCriteria()
 	{
 		$criteria = new MailCriteria();
