@@ -12,6 +12,12 @@ class Downloader
 
     private $password;
 
+
+    /**
+     * @var string
+     */
+    private $inboxFolder = 'INBOX';
+
     private $processedFolder = 'INBOX/processed';
 
     /**
@@ -36,6 +42,17 @@ class Downloader
         $this->password = $password;
     }
 
+    /**
+     * Set inbox folder
+     * @param string $inboxFolder
+     * @default "INBOX"
+     * @return $this
+     */
+    public function setInboxFolder($inboxFolder = 'INBOX'){
+        $this->inboxFolder = $inboxFolder;
+        return $this;
+    }
+
     /** Get IMAP alerts
      * @return array|bool
      * @see imap_alerts()
@@ -54,11 +71,14 @@ class Downloader
 
     public function fetch(MailCriteria $criteria, $callback)
     {
+        $HOST = '{' . $this->host . ':' . $this->port . '}';
+        $INBOX = $HOST . $this->inboxFolder;
+
         $mailbox = NULL;
         try {
-            $mailbox = @imap_open('{' . $this->host . ':' . $this->port . '}INBOX', $this->username, $this->password);
+            $mailbox = @imap_open($INBOX, $this->username, $this->password);
             if (!$mailbox) {
-                throw new ImapException("Cannot connect to imap server: {$this->host}:{$this->port}'");
+                throw new ImapException("Cannot connect to imap server: {$HOST}'");
             }
 
             $this->checkProcessedFolder($mailbox);
@@ -77,7 +97,7 @@ class Downloader
                     if ($processed) {
                         $res = imap_mail_move($mailbox, $emailIndex, $this->processedFolder);
                         if (!$res) {
-                            throw new \Exception("Unexpected error: Cannot move email to ");
+                            throw new \Exception("Unexpected error: Cannot move email to {$this->processedFolder}");
                             break;
                         }
                     }
@@ -97,7 +117,8 @@ class Downloader
 
     private function checkProcessedFolder($mailbox)
     {
-        $list = imap_getmailboxes($mailbox, '{' . $this->host . '}', $this->processedFolder);
+        $HOST = '{' . $this->host . ':' . $this->port . '}';
+        $list = imap_getmailboxes($mailbox, $HOST, $this->processedFolder);
         if (count($list) == 0) {
             throw new \Exception("You need to create imap folder '{$this->processedFolder}'");
         }
