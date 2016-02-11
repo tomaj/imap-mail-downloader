@@ -116,10 +116,14 @@ class Downloader
         return $this->errors;
     }
 
-    public function fetch(MailCriteria $criteria, $callback, $fetchParts = self::FETCH_OVERVIEW | self::FETCH_BODY)
+    public function fetch(MailCriteria $criteria, $callback, $fetchParts = null)
     {
         $HOST = '{' . $this->host . ':' . $this->port . '}';
         $INBOX = $HOST . $this->inboxFolder;
+
+        if ($fetchParts === null) {
+            $fetchParts = self::FETCH_OVERVIEW | self::FETCH_BODY;
+        }
 
         $mailbox = null;
         try {
