@@ -14,6 +14,16 @@ class Downloader
 
     private $processedFolder = 'INBOX/processed';
 
+    /**
+     * @var bool|array
+     */
+    private $alerts = FALSE;
+
+    /**
+     * @var bool|array
+     */
+    private $errors = FALSE;
+
     public function __construct($host, $port, $username, $password)
     {
         if (!extension_loaded('imap')) {
@@ -26,37 +36,63 @@ class Downloader
         $this->password = $password;
     }
 
+    /** Get IMAP alerts
+     * @return array|bool
+     * @see imap_alerts()
+     */
+    public function getAlerts(){
+        return $this->alerts;
+    }
+
+    /** Get IMAP errors
+     * @return array|bool
+     * @see imap_errors()
+     */
+    public function getErrors(){
+        return $this->errors;
+    }
+
     public function fetch(MailCriteria $criteria, $callback)
     {
-        $mailbox = @imap_open('{' . $this->host . ':' . $this->port . '}INBOX', $this->username, $this->password);
-        if (!$mailbox) {
-            throw new ImapException("Cannot connect to imap server: {$this->host}:{$this->port}'");
-        }
+        $mailbox = NULL;
+        try {
+            $mailbox = @imap_open('{' . $this->host . ':' . $this->port . '}INBOX', $this->username, $this->password);
+            if (!$mailbox) {
+                throw new ImapException("Cannot connect to imap server: {$this->host}:{$this->port}'");
+            }
 
-        $this->checkProcessedFolder($mailbox);
+            $this->checkProcessedFolder($mailbox);
 
-        $emails = $this->fetchEmails($mailbox, $criteria);
+            $emails = $this->fetchEmails($mailbox, $criteria);
 
-        if ($emails) {
-            foreach ($emails as $emailIndex) {
-                $overview = imap_fetch_overview($mailbox, $emailIndex, 0);
-                $message = imap_body($mailbox, $emailIndex);
+            if ($emails) {
+                foreach ($emails as $emailIndex) {
+                    $overview = imap_fetch_overview($mailbox, $emailIndex, 0);
+                    $message = imap_body($mailbox, $emailIndex);
 
-                $email = new Email($overview, $message);
+                    $email = new Email($overview, $message);
 
-                $processed = $callback($email);
+                    $processed = $callback($email);
 
-                if ($processed) {
-                    $res = imap_mail_move($mailbox, $emailIndex, $this->processedFolder);
-                    if (!$res) {
-                        throw new \Exception("Unexpected error: Cannot move email to ");
-                        break;
+                    if ($processed) {
+                        $res = imap_mail_move($mailbox, $emailIndex, $this->processedFolder);
+                        if (!$res) {
+                            throw new \Exception("Unexpected error: Cannot move email to ");
+                            break;
+                        }
                     }
                 }
             }
-        }
+        } catch(\Exception $e){
+            throw $e;
+        } finally {
+            $this->alerts = imap_alerts();
+            $this->errors = imap_errors();
 
-        @imap_close($mailbox);
+            if (is_resource($mailbox)) {
+                @imap_close($mailbox);
+            }
+        }
     }
 
     private function checkProcessedFolder($mailbox)
