@@ -25,6 +25,11 @@ class Downloader
     private $processedFolder = 'INBOX/processed';
 
     /**
+     * @var bool
+     */
+    private $processedFoldersAutomake = TRUE;
+
+    /**
      * @var bool|array
      */
     private $alerts = FALSE;
@@ -57,6 +62,15 @@ class Downloader
         return $this;
     }
 
+    /**
+     * @param bool $enabled
+     * @return $this
+     */
+    public function setProcessedFoldersAutomake($enabled){
+        $this->processedFoldersAutomake = $enabled;
+        return $this;
+    }
+
     /** Get IMAP alerts
      * @return array|bool
      * @see imap_alerts()
@@ -85,7 +99,7 @@ class Downloader
                 throw new ImapException("Cannot connect to imap server: {$HOST}'");
             }
 
-            $this->checkProcessedFolder($mailbox);
+            $this->checkProcessedFolder($mailbox, $this->processedFolder, $this->processedFoldersAutomake);
 
             $emails = $this->fetchEmails($mailbox, $criteria);
 
@@ -121,12 +135,16 @@ class Downloader
         }
     }
 
-    private function checkProcessedFolder($mailbox)
+    private function checkProcessedFolder($mailbox, $processedFolder, $automake = FALSE)
     {
         $HOST = '{' . $this->host . ':' . $this->port . '}';
-        $list = imap_getmailboxes($mailbox, $HOST, $this->processedFolder);
-        if (count($list) == 0) {
-            throw new \Exception("You need to create imap folder '{$this->processedFolder}'");
+        $list = imap_getmailboxes($mailbox, $HOST, $processedFolder);
+        if (count($list) == 0){
+            if ($automake){
+                imap_createmailbox($mailbox,$processedFolder);
+            } else {
+                throw new \Exception("You need to create imap folder '{$processedFolder}'");
+            }
         }
     }
 
