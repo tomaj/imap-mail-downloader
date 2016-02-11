@@ -38,9 +38,9 @@ class Email
 
     private $body;
 
-    public function __construct($overview = NULL, $body = NULL, $headers = NULL)
+    public function __construct($overview = null, $body = null, $headers = null)
     {
-        if ($overview !== NULL) {
+        if ($overview !== null) {
             $options = $overview[0];
 
             $this->from = $options->from;
@@ -191,7 +191,8 @@ class Email
     /**
      * @return mixed
      */
-    public function getHeaders(){
+    public function getHeaders()
+    {
         return $this->headers;
     }
 
@@ -207,11 +208,12 @@ class Email
      * @return string
      * @throws \Exception
      */
-    public function getSource(){
-        if ($this->headers == NULL){
+    public function getSource()
+    {
+        if ($this->headers == null) {
             throw new \Exception("Email was not created with full headers");
         }
-        if ($this->body == NULL){
+        if ($this->body == null) {
             throw new \Exception("Email was not created with a body");
         }
 
