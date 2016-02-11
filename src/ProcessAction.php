@@ -43,8 +43,8 @@ class ProcessAction
 
     public static function callback($callback){
         $processAction = new ProcessAction();
-        $processAction->action = self::ACTION_MOVE;
-        $processAction->processedFolder = $folder;
+        $processAction->action = self::ACTION_CALLBACK;
+        $processAction->callback = $callback;
         return $processAction;
     }
 

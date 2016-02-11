@@ -2,6 +2,8 @@
 
 namespace Tomaj\ImapMailDownloader;
 
+use Tomaj\ImapMailDownloader\ProcessAction;
+
 class Downloader
 {
     const FETCH_OVERVIEW    = 1;
@@ -22,7 +24,10 @@ class Downloader
      */
     private $inboxFolder = 'INBOX';
 
-    private $processedFolder = 'INBOX/processed';
+    /**
+     * @var ProcessAction
+     */
+    private $defaultProcessAction;
 
     /**
      * @var bool
@@ -39,7 +44,9 @@ class Downloader
      */
     private $errors = FALSE;
 
-    public function __construct($host, $port, $username, $password)
+
+
+    public function __construct($host, $port, $username, $password, $defaultProcessAction = NULL)
     {
         if (!extension_loaded('imap')) {
             throw new \Exception('Extension \'imap\' must be loaded');
@@ -49,6 +56,12 @@ class Downloader
         $this->port = $port;
         $this->username = $username;
         $this->password = $password;
+
+        if ($defaultProcessAction !== NULL and $defaultProcessAction instanceof ProcessAction){
+            $this->defaultProcessAction = $defaultProcessAction;
+        } else {
+            $this->defaultProcessAction = ProcessAction::move('INBOX/processed');
+        }
     }
 
     /**
@@ -68,6 +81,19 @@ class Downloader
      */
     public function setProcessedFoldersAutomake($enabled){
         $this->processedFoldersAutomake = $enabled;
+        return $this;
+    }
+
+    /**
+     * @param ProcessAction $processAction
+     * @return $this
+     * @throws \Exception
+     */
+    public function setDefaultProcessAction(ProcessAction $processAction){
+        if ($processAction === NULL or !($processAction instanceof  ProcessAction)){
+            throw new \Exception('Default processed action is invalid!');
+        }
+        $this->defaultProcessAction = $processAction;
         return $this;
     }
 
@@ -99,7 +125,11 @@ class Downloader
                 throw new ImapException("Cannot connect to imap server: {$HOST}'");
             }
 
-            $this->checkProcessedFolder($mailbox, $this->processedFolder, $this->processedFoldersAutomake);
+
+            // if default folder is set, check for its existence
+            if ($this->defaultProcessAction->getProcessedFolder() !== NULL) {
+                $this->checkProcessedFolder($mailbox, $this->defaultProcessAction->getProcessedFolder(), $this->processedFoldersAutomake);
+            }
 
             $emails = $this->fetchEmails($mailbox, $criteria);
 
@@ -112,14 +142,56 @@ class Downloader
 
                     $email = new Email($overview, $body, $headers);
 
-                    $processed = $callback($email);
+                    $processAction = $callback($email);
 
-                    if ($processed) {
-                        $res = imap_mail_move($mailbox, $emailIndex, $this->processedFolder);
-                        if (!$res) {
-                            throw new \Exception("Unexpected error: Cannot move email to {$this->processedFolder}");
-                            break;
+                    if (is_bool($processAction) and $processAction) {
+                        $processAction = $this->defaultProcessAction;
+                    } elseif(is_callable($processAction)){
+                        $processAction = ProcessAction::callback($processAction);
+                    } elseif (is_string($processAction)){
+                        switch($processAction){
+                            case ProcessAction::ACTION_MOVE:
+                                $processAction = ProcessAction::move($this->defaultProcessAction->getProcessedFolder());
+                                break;
+
+                            case ProcessAction::ACTION_DELETE:
+                                $processAction = ProcessAction::delete();
+                                break;
+
+                            case ProcessAction::ACTION_CALLBACK:
+                                $processAction = ProcessAction::callback($this->$this->defaultProcessedAction->getCallback());
+                                break;
+
+                            default:
+                                throw \Exception("Unexpected process action: {$processAction}");
                         }
+                    }
+
+                    // do not process if FALSE;
+                    if ($processAction instanceof ProcessAction){
+
+                        switch($processAction->getAction()){
+                            case ProcessAction::ACTION_MOVE:
+                                $this->checkProcessedFolder($mailbox, $processAction->getProcessedFolder(), $this->processedFoldersAutomake);
+                                $res = imap_mail_move($mailbox, $emailIndex, $processAction->getProcessedFolder());
+                                if (!$res) {
+                                    throw new \Exception("Unexpected error: Cannot move email to ");
+                                    break;
+                                }
+                                break;
+
+                            case ProcessAction::ACTION_DELETE:
+                                $res = imap_delete($mailbox, $emailIndex);
+                                if (!$res){
+                                    throw new \Exception("Unexpected error: Cannot delete email.");
+                                }
+                                break;
+
+                            case ProcessAction::ACTION_CALLBACK:
+                                call_user_func_array($processAction->getCallback(),array($mailbox, $emailIndex));
+                                break;
+                        }
+
                     }
                 }
             }
