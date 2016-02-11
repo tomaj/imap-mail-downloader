@@ -4,6 +4,10 @@ namespace Tomaj\ImapMailDownloader;
 
 class Downloader
 {
+    const FETCH_OVERVIEW    = 1;
+    const FETCH_HEADERS     = 2;
+    const FETCH_BODY        = 4;
+
     private $host;
 
     private $port;
@@ -69,7 +73,7 @@ class Downloader
         return $this->errors;
     }
 
-    public function fetch(MailCriteria $criteria, $callback)
+    public function fetch(MailCriteria $criteria, $callback, $fetchParts = self::FETCH_OVERVIEW | self::FETCH_BODY)
     {
         $HOST = '{' . $this->host . ':' . $this->port . '}';
         $INBOX = $HOST . $this->inboxFolder;
@@ -87,10 +91,12 @@ class Downloader
 
             if ($emails) {
                 foreach ($emails as $emailIndex) {
-                    $overview = imap_fetch_overview($mailbox, $emailIndex, 0);
-                    $message = imap_body($mailbox, $emailIndex);
+                    // fetch only wanted parts
+                    $overview = $fetchParts & self::FETCH_OVERVIEW ? imap_fetch_overview($mailbox, $emailIndex, 0) : NULL;
+                    $headers = $fetchParts & self::FETCH_HEADERS ? @imap_fetchheader($mailbox, $emailIndex, 0) : NULL;
+                    $body = $fetchParts & self::FETCH_BODY ? imap_body($mailbox, $emailIndex) : NULL;
 
-                    $email = new Email($overview, $message);
+                    $email = new Email($overview, $body, $headers);
 
                     $processed = $callback($email);
 
