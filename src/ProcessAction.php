@@ -12,7 +12,7 @@ class ProcessAction
     private $processedFolder = null;
     private $callback = null;
 
-    public static function createDefault($action,$processedFolder = null, $callback = null)
+    public static function createDefault($action, $processedFolder = null, $callback = null)
     {
 
         if ($action == self::ACTION_MOVE and !is_string($processedFolder)) {
@@ -67,4 +67,3 @@ class ProcessAction
         return $this->callback;
     }
 }
-

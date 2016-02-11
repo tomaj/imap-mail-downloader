@@ -2,7 +2,6 @@
 
 namespace Tomaj\ImapMailDownloader;
 
-
 class Downloader
 {
     const FETCH_OVERVIEW    = 1;
@@ -153,7 +152,7 @@ class Downloader
                     } elseif (is_callable($processAction)) {
                         $processAction = ProcessAction::callback($processAction);
                     } elseif (is_string($processAction)) {
-                        switch($processAction){
+                        switch ($processAction) {
                             case ProcessAction::ACTION_MOVE:
                                 $processAction = ProcessAction::move($this->defaultProcessAction->getProcessedFolder());
                                 break;
@@ -174,7 +173,7 @@ class Downloader
                     // do not process if false;
                     if ($processAction instanceof ProcessAction) {
 
-                        switch($processAction->getAction()) {
+                        switch ($processAction->getAction()) {
                             case ProcessAction::ACTION_MOVE:
                                 $this->checkProcessedFolder($mailbox, $processAction->getProcessedFolder(), $this->processedFoldersAutomake);
                                 $res = imap_mail_move($mailbox, $emailIndex, $processAction->getProcessedFolder());
