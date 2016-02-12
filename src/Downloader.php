@@ -164,6 +164,28 @@ class Downloader
         return $this->errors;
     }
 
+    /**
+     * Fetch and process emails.
+     *
+     * The $callback has the signature: mixed function (Email $email)
+     * Return values can be:
+     *      false   do not process
+     *      true    apply default process action (@see Downloader::setDefaultProcessAction())
+     *      (string) ProcessAction::ACTION_MOVE
+     *              override default process action, move emails using folder provided by default process action
+     *      (string) ProcessAction::ACTION_DELETE
+     *              override default process action, delete emails
+     *      (string) ProcessAction::ACTION_CALLBACK
+     *              override default process action, feed email to callback provided by default process action
+     *      ProcessAction
+     *              override default process action with provided process action
+     *
+     * @param MailCriteria $criteria    search criteria
+     * @param callable $callback        all found emails are passed to this callback
+     * @param null|int $fetchParts      null = use default (FETCH_OVERVIEW | FETCH_BODY)
+     * @throws \Exception
+     * @throws ImapException
+     */
     public function fetch(MailCriteria $criteria, $callback, $fetchParts = null)
     {
         $HOST = '{' . $this->host . ':' . $this->port . '}';
@@ -295,7 +317,10 @@ class Downloader
         $list = imap_getmailboxes($mailbox, $HOST, $processedFolder);
         if (count($list) == 0) {
             if ($automake) {
-                imap_createmailbox($mailbox, $processedFolder);
+                $res = imap_createmailbox($mailbox, $processedFolder);
+                if (!$res) {
+                    throw new \Exception("Failed to create imap folder '{$processedFolder}'");
+                }
             } else {
                 throw new \Exception("You need to create imap folder '{$processedFolder}'");
             }
