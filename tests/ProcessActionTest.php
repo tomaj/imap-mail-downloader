@@ -4,12 +4,6 @@ namespace Tomaj\ImapMailDownloader;
 
 require_once dirname(__FILE__) . '/mockups/ImapMockupForProcessActionTest.php';
 
-use Tomaj\ImapMailDownloader\Email;
-use Tomaj\ImapMailDownloader\MailCriteria;
-use Tomaj\ImapMailDownloader\Downloader;
-use Tomaj\ImapMailDownloader\ProcessAction;
-use Tomaj\ImapMailDownloader\ImapMockup;
-
 class ProcessActionTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -109,7 +103,7 @@ class ProcessActionTest extends \PHPUnit_Framework_TestCase
 
         // default action is deleting of messages
         $defaultProcessAction = ProcessAction::callback(function ($mailbox, $emailIndex) {
-            self::$calledBack = ($mailbox == 'mailbox-resource 1234' && $emailIndex == 1234567890);
+            ProcessActionTest::$calledBack = ($mailbox == 'mailbox-resource 1234' && $emailIndex == 1234567890);
         });
         $this->downloader->setDefaultProcessAction($defaultProcessAction);
 
@@ -155,7 +149,7 @@ class ProcessActionTest extends \PHPUnit_Framework_TestCase
 
         $this->downloader->fetch($this->criteria, function (Email $email) {
             return function ($mailbox, $emailIndex) {
-                self::$calledBack = ($mailbox == 'mailbox-resource 1234' && $emailIndex == 1234567890);
+                ProcessActionTest::$calledBack = ($mailbox == 'mailbox-resource 1234' && $emailIndex == 1234567890);
             };
         }, 0);
 
