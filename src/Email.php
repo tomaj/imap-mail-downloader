@@ -2,6 +2,10 @@
 
 namespace Tomaj\ImapMailDownloader;
 
+/**
+ * Class Email
+ * @package Tomaj\ImapMailDownloader
+ */
 class Email
 {
     private $from;

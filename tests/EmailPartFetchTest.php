@@ -1,68 +1,30 @@
 <?php
 
-//require_once dirname(__FILE__) . '/../vendor/autoload.php';
-require_once dirname(__FILE__) . '/mockups/ImapMockup.php';
+namespace Tomaj\ImapMailDownloader;
 
-use Tomaj\ImapMailDownloader\Email;
-use Tomaj\ImapMailDownloader\MailCriteria;
-use Tomaj\ImapMailDownloader\Downloader;
-use Tomaj\ImapMailDownloader\ImapMockup;
-
-
-class ImapMockupForEmailPartFetchTest extends \Tomaj\ImapMailDownloader\ImapMockup{
-    function imap_fetch_overview($mailbox, $emailIndex, $options){
-
-        $data = new \stdClass;
-        $data->from = 'from@asdsad.sk';
-        $data->to = 'asdsad@adsad.sk';
-        $data->date = '2014-01-02 14:34';
-        $data->message_id = 'sa09uywqet09u3t';
-        $data->references = 'asdas09uyfei9f';
-        $data->in_reply_to = '135325325325';
-        $data->size = 125;
-        $data->uid = '236-0982369034856';
-        $data->msgno = 4125;
-        $data->recent = 1;
-        $data->flagged = 0;
-        $data->answered = 1;
-        $data->deleted = 0;
-        $data->seen = 1;
-        $data->draft = 1;
-
-        return array($data);
-    }
-
-    function imap_fetchheader($mailbox, $emailIndex, $options){
-        return '1234567890 8yc81bch2zzxkjtyp8eraqziaou';
-    }
-
-    function imap_body($mailbox, $emailIndex){
-        return 'asf098ywetoiuwhegt908weg ewfg dsyfg089dsyfg';
-    }
-}
-
-
-
+require_once dirname(__FILE__) . '/mockups/ImapMockupForEmailPartFetchTest.php';
 
 class EmailPartFetchTest extends \PHPUnit_Framework_TestCase
 {
     protected $downloader;
     protected $criteria;
 
-
-    protected function setUp(){
-        $this->downloader = new Downloader('host',12,'username','password');
+    protected function setUp()
+    {
+        $this->downloader = new Downloader('host', 12, 'username', 'password');
         $this->criteria = new MailCriteria();
         ImapMockup::setImplementation(new ImapMockupForEmailPartFetchTest());
     }
 
-//    protected function tearDown(){
-//        parent::tearDown();
-//        \Tomaj\ImapMailDownloader\ImapMockup::setImplementation(null);
-//    }
+    protected function tearDown()
+    {
+        parent::tearDown();
+        ImapMockup::setImplementation(null);
+    }
 
-    protected function checkOverview(Email $email, $expectIsset){
-        if ($expectIsset){
+    protected function checkOverview(Email $email, $expectIsset)
+    {
+        if ($expectIsset) {
             $this->assertEquals($email->getFrom(), 'from@asdsad.sk');
             $this->assertEquals($email->getTo(), 'asdsad@adsad.sk');
             $this->assertEquals($email->getDate(), '2014-01-02 14:34');
@@ -79,77 +41,84 @@ class EmailPartFetchTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals($email->getSeen(), 1);
             $this->assertEquals($email->getDraft(), 1);
         } else {
-            $this->assertEquals($email->getFrom(), NULL);
-            $this->assertEquals($email->getTo(), NULL);
-            $this->assertEquals($email->getDate(), NULL);
-            $this->assertEquals($email->getMessageId(), NULL);
-            $this->assertEquals($email->getReferences(), NULL);
-            $this->assertEquals($email->getInReplyTo(), NULL);
-            $this->assertEquals($email->getSize(), NULL);
-            $this->assertEquals($email->getUid(), NULL);
-            $this->assertEquals($email->getMsgNo(), NULL);
-            $this->assertEquals($email->getRecent(), NULL);
-            $this->assertEquals($email->getFlagged(), NULL);
-            $this->assertEquals($email->getAnswered(), NULL);
-            $this->assertEquals($email->getDeleted(), NULL);
-            $this->assertEquals($email->getSeen(), NULL);
-            $this->assertEquals($email->getDraft(), NULL);
+            $this->assertEquals($email->getFrom(), null);
+            $this->assertEquals($email->getTo(), null);
+            $this->assertEquals($email->getDate(), null);
+            $this->assertEquals($email->getMessageId(), null);
+            $this->assertEquals($email->getReferences(), null);
+            $this->assertEquals($email->getInReplyTo(), null);
+            $this->assertEquals($email->getSize(), null);
+            $this->assertEquals($email->getUid(), null);
+            $this->assertEquals($email->getMsgNo(), null);
+            $this->assertEquals($email->getRecent(), null);
+            $this->assertEquals($email->getFlagged(), null);
+            $this->assertEquals($email->getAnswered(), null);
+            $this->assertEquals($email->getDeleted(), null);
+            $this->assertEquals($email->getSeen(), null);
+            $this->assertEquals($email->getDraft(), null);
         }
     }
 
-    protected function checkBody(Email $email, $expectIsset){
-        if ($expectIsset){
+    protected function checkBody(Email $email, $expectIsset)
+    {
+        if ($expectIsset) {
             $this->assertEquals($email->getBody(), 'asf098ywetoiuwhegt908weg ewfg dsyfg089dsyfg');
         } else {
-            $this->assertEquals($email->getBody(), NULL);
+            $this->assertEquals($email->getBody(), null);
         }
     }
 
-    protected function checkHeader(Email $email, $expectIsset){
-        if ($expectIsset){
+    protected function checkHeader(Email $email, $expectIsset)
+    {
+        if ($expectIsset) {
             $this->assertEquals($email->getHeaders(), '1234567890 8yc81bch2zzxkjtyp8eraqziaou');
         } else {
-            $this->assertEquals($email->getHeaders(), NULL);
+            $this->assertEquals($email->getHeaders(), null);
         }
     }
 
-    public function testFetchNoParts(){
-        $this->downloader->fetch($this->criteria,function(Email $email){
-            $this->checkOverview($email,false);
-            $this->checkBody($email,false);
-            $this->checkHeader($email,false);
-        },0);
+    public function testFetchNoParts()
+    {
+        $this->downloader->fetch($this->criteria, function (Email $email) {
+            $this->checkOverview($email, false);
+            $this->checkBody($email, false);
+            $this->checkHeader($email, false);
+        }, 0);
     }
 
-    public function testFetchOverviewOnly(){
-        $this->downloader->fetch($this->criteria,function(Email $email){
-            $this->checkOverview($email,true);
-            $this->checkBody($email,false);
-            $this->checkHeader($email,false);
-        },Downloader::FETCH_OVERVIEW);
+    public function testFetchOverviewOnly()
+    {
+        $this->downloader->fetch($this->criteria, function (Email $email) {
+            $this->checkOverview($email, true);
+            $this->checkBody($email, false);
+            $this->checkHeader($email, false);
+        }, Downloader::FETCH_OVERVIEW);
     }
 
-    public function testFetchHeaderOnly(){
-        $this->downloader->fetch($this->criteria,function(Email $email){
-            $this->checkOverview($email,false);
-            $this->checkBody($email,false);
-            $this->checkHeader($email,true);
-        },Downloader::FETCH_HEADERS);
+    public function testFetchHeaderOnly()
+    {
+        $this->downloader->fetch($this->criteria, function (Email $email) {
+            $this->checkOverview($email, false);
+            $this->checkBody($email, false);
+            $this->checkHeader($email, true);
+        }, Downloader::FETCH_HEADERS);
     }
 
-    public function testFetchBodyOnly(){
-        $this->downloader->fetch($this->criteria,function(Email $email){
-            $this->checkOverview($email,false);
-            $this->checkBody($email,true);
-            $this->checkHeader($email,false);
-        },Downloader::FETCH_BODY);
+    public function testFetchBodyOnly()
+    {
+        $this->downloader->fetch($this->criteria, function (Email $email) {
+            $this->checkOverview($email, false);
+            $this->checkBody($email, true);
+            $this->checkHeader($email, false);
+        }, Downloader::FETCH_BODY);
     }
 
-    public function testFetchAll(){
-        $this->downloader->fetch($this->criteria,function(Email $email){
-            $this->checkOverview($email,true);
-            $this->checkBody($email,true);
-            $this->checkHeader($email,true);
-        },Downloader::FETCH_OVERVIEW | Downloader::FETCH_HEADERS | Downloader::FETCH_BODY);
+    public function testFetchAll()
+    {
+        $this->downloader->fetch($this->criteria, function (Email $email) {
+            $this->checkOverview($email, true);
+            $this->checkBody($email, true);
+            $this->checkHeader($email, true);
+        }, Downloader::FETCH_OVERVIEW | Downloader::FETCH_HEADERS | Downloader::FETCH_BODY);
     }
 }

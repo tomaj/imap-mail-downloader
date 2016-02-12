@@ -1,14 +1,12 @@
 <?php
 
-require_once dirname(__FILE__) . '/../vendor/autoload.php';
+namespace Tomaj\ImapMailDownloader;
 
-use Tomaj\ImapMailDownloader\Email;
-
-class EmailTest extends PHPUnit_Framework_TestCase
+class EmailTest extends \PHPUnit_Framework_TestCase
 {
     public function testCreationWithouOptionalAttributes()
     {
-        $data = new stdClass;
+        $data = new \stdClass;
         $data->from = 'from@asdsad.sk';
         $data->to = 'asdsad@adsad.sk';
         $data->date = '2014-01-02 14:34';
@@ -46,12 +44,12 @@ class EmailTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($email->getBody(), 'asf098ywetoiuwhegt908weg ewfg dsyfg089dsyfg');
 
-        $this->assertEquals($email->getHeaders(), NULL);
+        $this->assertEquals($email->getHeaders(), null);
     }
 
     public function testCreationWithAllAttributes()
     {
-        $data = new stdClass;
+        $data = new \stdClass;
         $data->from = 'from@asdsad.sk';
         $data->to = 'asdsad@adsad.sk';
         $data->date = '2014-01-02 14:34';
@@ -90,13 +88,13 @@ class EmailTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($email->getBody(), 'asf098ywetoiuwhegt908weg ewfg dsyfg089dsyfg');
 
-        $this->assertEquals($email->getHeaders(), NULL);
+        $this->assertEquals($email->getHeaders(), null);
     }
 
 
     public function testCreationWithOverviewOnly()
     {
-        $data = new stdClass;
+        $data = new \stdClass;
         $data->from = 'from@asdsad.sk';
         $data->to = 'asdsad@adsad.sk';
         $data->date = '2014-01-02 14:34';
@@ -131,69 +129,72 @@ class EmailTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($email->getSeen(), 1);
         $this->assertEquals($email->getDraft(), 1);
 
-        $this->assertEquals($email->getBody(), NULL);
+        $this->assertEquals($email->getBody(), null);
 
-        $this->assertEquals($email->getHeaders(), NULL);
+        $this->assertEquals($email->getHeaders(), null);
     }
 
-    public function testCreationWithBodyOnly(){
+    public function testCreationWithBodyOnly()
+    {
 
         $body = 'asf098ywetoiuwhegt908weg ewfg dsyfg089dsyfg';
 
-        $email = new Email(NULL,$body);
+        $email = new Email(null, $body);
 
-        $this->assertEquals($email->getFrom(), NULL);
-        $this->assertEquals($email->getTo(), NULL);
-        $this->assertEquals($email->getDate(), NULL);
-        $this->assertEquals($email->getMessageId(), NULL);
-        $this->assertEquals($email->getReferences(), NULL);
-        $this->assertEquals($email->getInReplyTo(), NULL);
-        $this->assertEquals($email->getSize(), NULL);
-        $this->assertEquals($email->getUid(), NULL);
-        $this->assertEquals($email->getMsgNo(), NULL);
-        $this->assertEquals($email->getRecent(), NULL);
-        $this->assertEquals($email->getFlagged(), NULL);
-        $this->assertEquals($email->getAnswered(), NULL);
-        $this->assertEquals($email->getDeleted(), NULL);
-        $this->assertEquals($email->getSeen(), NULL);
-        $this->assertEquals($email->getDraft(), NULL);
+        $this->assertEquals($email->getFrom(), null);
+        $this->assertEquals($email->getTo(), null);
+        $this->assertEquals($email->getDate(), null);
+        $this->assertEquals($email->getMessageId(), null);
+        $this->assertEquals($email->getReferences(), null);
+        $this->assertEquals($email->getInReplyTo(), null);
+        $this->assertEquals($email->getSize(), null);
+        $this->assertEquals($email->getUid(), null);
+        $this->assertEquals($email->getMsgNo(), null);
+        $this->assertEquals($email->getRecent(), null);
+        $this->assertEquals($email->getFlagged(), null);
+        $this->assertEquals($email->getAnswered(), null);
+        $this->assertEquals($email->getDeleted(), null);
+        $this->assertEquals($email->getSeen(), null);
+        $this->assertEquals($email->getDraft(), null);
 
         $this->assertEquals($email->getBody(), 'asf098ywetoiuwhegt908weg ewfg dsyfg089dsyfg');
 
-        $this->assertEquals($email->getHeaders(), NULL);
+        $this->assertEquals($email->getHeaders(), null);
     }
 
 
-    public function testCreationWithHeadersOnly(){
+    public function testCreationWithHeadersOnly()
+    {
 
         $body = 'asf098ywetoiuwhegt908weg ewfg dsyfg089dsyfg';
 
-        $email = new Email(NULL,$body);
+        $email = new Email(null, $body);
 
-        $this->assertEquals($email->getFrom(), NULL);
-        $this->assertEquals($email->getTo(), NULL);
-        $this->assertEquals($email->getDate(), NULL);
-        $this->assertEquals($email->getMessageId(), NULL);
-        $this->assertEquals($email->getReferences(), NULL);
-        $this->assertEquals($email->getInReplyTo(), NULL);
-        $this->assertEquals($email->getSize(), NULL);
-        $this->assertEquals($email->getUid(), NULL);
-        $this->assertEquals($email->getMsgNo(), NULL);
-        $this->assertEquals($email->getRecent(), NULL);
-        $this->assertEquals($email->getFlagged(), NULL);
-        $this->assertEquals($email->getAnswered(), NULL);
-        $this->assertEquals($email->getDeleted(), NULL);
-        $this->assertEquals($email->getSeen(), NULL);
-        $this->assertEquals($email->getDraft(), NULL);
+        $this->assertEquals($email->getFrom(), null);
+        $this->assertEquals($email->getTo(), null);
+        $this->assertEquals($email->getDate(), null);
+        $this->assertEquals($email->getMessageId(), null);
+        $this->assertEquals($email->getReferences(), null);
+        $this->assertEquals($email->getInReplyTo(), null);
+        $this->assertEquals($email->getSize(), null);
+        $this->assertEquals($email->getUid(), null);
+        $this->assertEquals($email->getMsgNo(), null);
+        $this->assertEquals($email->getRecent(), null);
+        $this->assertEquals($email->getFlagged(), null);
+        $this->assertEquals($email->getAnswered(), null);
+        $this->assertEquals($email->getDeleted(), null);
+        $this->assertEquals($email->getSeen(), null);
+        $this->assertEquals($email->getDraft(), null);
 
         $this->assertEquals($email->getBody(), 'asf098ywetoiuwhegt908weg ewfg dsyfg089dsyfg');
 
-        $this->assertEquals($email->getHeaders(), NULL);
+        $this->assertEquals($email->getHeaders(), null);
     }
 
-    public function testCreationWithAllParams(){
+    public function testCreationWithAllParams()
+    {
 
-        $data = new stdClass;
+        $data = new \stdClass;
         $data->from = 'from@asdsad.sk';
         $data->to = 'asdsad@adsad.sk';
         $data->date = '2014-01-02 14:34';
@@ -238,24 +239,25 @@ class EmailTest extends PHPUnit_Framework_TestCase
     }
 
 
-    public function testGetSourceRequirements(){
+    public function testGetSourceRequirements()
+    {
 
         $body = 'asf098ywetoiuwhegt908weg ewfg dsyfg089dsyfg';
         $headers = '1234567890 8yc81bch2zzxkjtyp8eraqziaou';
 
-        $email = new Email(NULL, $body, NULL);
+        $email = new Email(null, $body, null);
         try {
             $email->getSource();
             $this->fail("if headers are passed at creation time an Exception should be thrown");
-        } catch(Exception $e){
+        } catch (\Exception $e) {
             // test passed
         }
 
-        $mail = new Email(NULL, NULL, $headers);
+        $mail = new Email(null, null, $headers);
         try {
             $email->getSource();
             $this->fail("if body is not passed at creation time an Exception should be thrown");
-        } catch(Exception $e){
+        } catch (\Exception $e) {
             // test passed
         }
     }

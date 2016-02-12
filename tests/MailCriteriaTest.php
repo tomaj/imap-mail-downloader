@@ -1,10 +1,8 @@
 <?php
 
-require_once dirname(__FILE__) . '/../vendor/autoload.php';
+namespace Tomaj\ImapMailDownloader;
 
-use Tomaj\ImapMailDownloader\MailCriteria;
-
-class MailCriteriaTest extends PHPUnit_Framework_TestCase
+class MailCriteriaTest extends \PHPUnit_Framework_TestCase
 {
     public function testDefault()
     {
@@ -35,6 +33,9 @@ class MailCriteriaTest extends PHPUnit_Framework_TestCase
         $criteria->setSince('2014-01-05 14:56:11');
         $criteria->setSubject('my Subject');
 
-        $this->assertEquals('FROM "b@b.sk" KEYWORD "testKeyword" UNSEEN SUBJECT "my Subject" SINCE "2014-01-05 14:56:11"', $criteria->getSearchString());
+        $this->assertEquals(
+            'FROM "b@b.sk" KEYWORD "testKeyword" UNSEEN SUBJECT "my Subject" SINCE "2014-01-05 14:56:11"',
+            $criteria->getSearchString()
+        );
     }
 }

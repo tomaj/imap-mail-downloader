@@ -50,61 +50,96 @@ Some extended features:
 ``` php
 
 // define what you consider your inbox folder..
-$downloader->setInboxFolder('INDBOX');
+$downloader->setInboxFolder('INBOX');
 
 // if processed folder does not exist, automatically try to create it
 $downloader->setProcessedFoldersAutomake(true);
 
 
 //// define what data to get for email
-//  FETCH_OVERVIEW      just basic header information (see imap_fetchoverview)
-//  FETCH_BODY          email body as string
-//  FETCH_HEADERS       complete email headers as string
+//      Downloader::FETCH_OVERVIEW      just basic header information (see imap_fetchoverview)
+//      Downloader::FETCH_BODY          email body as string
+//      Downloader::FETCH_HEADERS       complete email headers as string
+//      Downloader::FETCH_SOURCE        email body and complete headers (equal to FETCH_BODY | FETCH_HEADERS)
 // default = FETCH_OVERVIEW | FETCH_BODY
 
 $fetchParts = Downloader::FETCH_OVERVIEW | Downloader::FETCH_BODY | Downloader::FETCH_HEADERS;
+
 $downloader->fetch($criteria, function(Email $email) {
 
-    // FETCH_OVERVIEW
+    // available if and only if specified FETCH_OVERVIEW
     print_r($email->getFrom());
     print_r($email->getSubject());
     ...
+    // see class Email for more available fields
 
-    print_r($email->getBody()); // FETCH_BODY
+    print_r($email->getBody()); // available if and only if specified FETCH_BODY
 
-	print_r($email->getHeaders()); // FETCH_HEADERS
+	print_r($email->getHeaders()); // available if and only if specified FETCH_HEADERS
 
-	print_r($email->getSource()); // FETCH_BODY | FETCH_HEADERS
-});
+	print_r($email->getSource()); // available if and only if specified FETCH_BODY | FETCH_HEADERS or FETCH_SOURCE
+	
+}, $fetchParts); // <- Parts to fetch are an optional argument
 
 
 
-//// use more custom processing
+
+//// use more custom or case-based processing
 
 /// set default action
 //      ProcessAction::move('your-folder');
+//          Email will be moved to 'your-folder'
 //      ProcessAction::delete();
+//          Email will be deleted
 //      ProcessAction::callback(function($mailbox, $emailIndex){ ... });
+//          Perform your own operations on the imap resource $mailbox given the $emailIndex (for example see below)
 
 $defaultProcessAction = ProcessAction::move('INBOX/processed');
 $downloader->setDefaultProcessAction($defaultProcessAction);
 
-// override default process action based on email contents
+
+//// override default process action based on email contents
 $downloader->fetch($criteria, function(Email $email) {
     ...
-    return FALSE; // do not process
+    return false; // do not process
 
-    return TRUE; // perform default process action
+    return true; // perform default process action
 
-    return new ProcessAction::delete(); // override default process action based on email
+    return new ProcessAction::delete(); // override default process action based on email contents
     
     return new ProcessAction::callback(function($mailbox, $emailIndex){
-        //do your own customized processing
+        //do your own customized email handling
         imap_delete($mailbox, $emailIndex);
         ...
     });
 });
 
+
+
+//// Possibility to specify a default process action with predefined alternative parameters and thus 
+// simplifying the email based override
+$defaultProcessAction = ProcessAction::createDefault(
+    ProcessAction::ACTION_DELETE,
+    'INBOX/myCustomFolder',
+    function ($mailbox, $emailIndex) {
+        // perform any imap functions of your choice
+    }
+);
+
+// simplify the email based override 
+$downloader->fetch($criteria, function(Email $email) {
+    
+    return false; // do not process
+
+    return true; // perform default action -> delete
+
+    return ProcessAction::ACTION_MOVE; // override default action -> move email to 'INBOX/myCustomFolder'
+    
+    return ProcessAction::ACTION_CALLBACK; // override default action -> call back to function defined in default action
+    
+});
+
+
 ```
 
-Library is extremelly simple. Usefull for processing some notification emails. For complex usecases you will need to use native php *imap_* functions.
+Library is extremely simple. Useful for processing some notification emails. For complex usecases you will need to use native php *imap_* functions.

@@ -2,16 +2,54 @@
 
 namespace Tomaj\ImapMailDownloader;
 
+/**
+ * Class ProcessAction
+ * @package Tomaj\ImapMailDownloader
+ */
 class ProcessAction
 {
+    /**
+     * @const Process action move email to another folder on imap server.
+     * @see ProcessAction::move()
+     */
     const ACTION_MOVE = 'move';
+
+    /**
+     * @const Process action delete email
+     * @see ProcessAction::delete()
+     */
     const ACTION_DELETE = 'delete';
+
+    /**
+     * @const Process action call user supplied callback with
+     */
     const ACTION_CALLBACK = 'callback';
 
-    private $action = 'move';
-    private $processedFolder = null;
-    private $callback = null;
+    /**
+     * @var string
+     */
+    private $action;
 
+    /**
+     * @var string|null
+     */
+    private $processedFolder;
+
+    /**
+     * @var callable|null
+     */
+    private $callback;
+
+
+    /**
+     * Create a default action and pack additional standard behaviours that can be used in
+     * string based override commands
+     * @param $action
+     * @param null|string $processedFolder
+     * @param null|string $callback
+     * @return ProcessAction
+     * @throws \Exception
+     */
     public static function createDefault($action, $processedFolder = null, $callback = null)
     {
 
@@ -28,7 +66,11 @@ class ProcessAction
         return $processAction;
     }
 
-
+    /**
+     * Create action that moves emails to another imap folder
+     * @param $folder
+     * @return ProcessAction
+     */
     public static function move($folder)
     {
         $processAction = new ProcessAction();
@@ -37,6 +79,10 @@ class ProcessAction
         return $processAction;
     }
 
+    /**
+     * Create action that deletes emails
+     * @return ProcessAction
+     */
     public static function delete()
     {
         $processAction = new ProcessAction();
@@ -44,6 +90,13 @@ class ProcessAction
         return $processAction;
     }
 
+    /**
+     * Create action that calls user supplied callback
+     * The callable is passed two arguments, the imap mailbox resource and the email index, ie the signature is:
+     *      void function (Resource $mailbox, int $emailIndex)
+     * @param callable $callback
+     * @return ProcessAction
+     */
     public static function callback($callback)
     {
         $processAction = new ProcessAction();
@@ -52,16 +105,28 @@ class ProcessAction
         return $processAction;
     }
 
+    /**
+     * Action getter
+     * @return string
+     */
     public function getAction()
     {
         return $this->action;
     }
 
+    /**
+     * Move action folder target getter
+     * @return null|string
+     */
     public function getProcessedFolder()
     {
         return $this->processedFolder;
     }
 
+    /**
+     * Callback getter
+     * @return callable|null
+     */
     public function getCallback()
     {
         return $this->callback;

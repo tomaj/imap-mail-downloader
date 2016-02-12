@@ -1,49 +1,111 @@
 <?php
+
 namespace Tomaj\ImapMailDownloader;
 
-ini_set('error_reporting',E_ALL | E_STRICT);
-ini_set('display_errors','On');
-
-//require_once dirname(__FILE__) . '/../vendor/autoload.php';
-
-
-
+/**
+ * Class ImapMockup
+ * Serves as Mockup of imap function for unit testing
+ * @package Tomaj\ImapMailDownloader
+ */
 class ImapMockup
 {
 
+    /**
+     * @var ImapMockup
+     */
     public static $implementation;
 
-    public static function setImplementation($implementation){
+    /** Set currently active ImapMockup implementation
+     * @param ImapMockup $implementation
+     */
+    public static function setImplementation($implementation)
+    {
         self::$implementation = $implementation;
     }
 
-
-    public function imap_open($inbox, $username, $password){
+    /**
+     * @param $inbox
+     * @param $username
+     * @param $password
+     * @return bool
+     * @see imap_open()
+     */
+    public function imapOpen($inbox, $username, $password)
+    {
         return true;
     }
-    public function imap_close($mailbox){
+
+    /**
+     * @param $mailbox
+     * @return bool
+     * @see imap_close()
+     */
+    public function imapClose($mailbox)
+    {
         return true;
     }
-    function imap_alerts(){
-        return FALSE;
-    }
-    public function imap_errors(){
-        return FALSE;
+
+    /**
+     * @return bool
+     * @see imap_alerts()
+     */
+    public function imapAlerts()
+    {
+        return false;
     }
 
-    public function imap_getmailboxes($mailbox, $host, $folder){
+    /**
+     * @return bool
+     * @see imap_errors()
+     */
+    public function imapErrors()
+    {
+        return false;
+    }
+
+    /**
+     * @param $mailbox
+     * @param $host
+     * @param $folder
+     * @return array
+     * @see imap_getmailboxes()
+     */
+    public function imapGetmailboxes($mailbox, $host, $folder)
+    {
         return array(1);
     }
 
-    public function imap_createmailbox($mailbox, $folder){
+    /**
+     * @param $mailbox
+     * @param $folder
+     * @return bool
+     * @see imap_createmailbox()
+     */
+    public function imapCreatemailbox($mailbox, $folder)
+    {
         return true;
     }
 
-    function imap_search($mailbox, $searchString){
+    /**
+     * @param $mailbox
+     * @param $searchString
+     * @return array
+     * @see imap_search()
+     */
+    public function imapSearch($mailbox, $searchString)
+    {
         return array(1234567890);
     }
 
-    function imap_fetch_overview($mailbox, $emailIndex, $options){
+    /**
+     * @param $mailbox
+     * @param $emailIndex
+     * @param $options
+     * @return array
+     * @see imap_fetch_overview()
+     */
+    public function imapFetchOverview($mailbox, $emailIndex, $options)
+    {
 
         $data = new \stdClass;
         $data->from = 'from@asdsad.sk';
@@ -65,68 +127,194 @@ class ImapMockup
         return array($data);
     }
 
-    function imap_fetchheader($mailbox, $emailIndex, $options){
+    /**
+     * @param $mailbox
+     * @param $emailIndex
+     * @param $options
+     * @return string
+     * @see imap_fetchheader()
+     */
+    public function imapFetchheader($mailbox, $emailIndex, $options)
+    {
         return '1234567890 8yc81bch2zzxkjtyp8eraqziaou';
     }
 
-    function imap_body($mailbox, $emailIndex){
+    /**
+     * @param $mailbox
+     * @param $emailIndex
+     * @return string
+     * @see imap_body()
+     */
+    public function imapBody($mailbox, $emailIndex)
+    {
         return 'asf098ywetoiuwhegt908weg ewfg dsyfg089dsyfg';
     }
 
-    function imap_mail_move($mailbox, $emailIndex, $processedFolder){
+    /**
+     * @param $mailbox
+     * @param $emailIndex
+     * @param $processedFolder
+     * @return bool
+     * @see imap_mail_move()
+     */
+    public function imapMailMove($mailbox, $emailIndex, $processedFolder)
+    {
         return true;
     }
 
-    function imap_delete($mailbox, $emailIndex){
+    /**
+     * @param $mailbox
+     * @param $emailIndex
+     * @return bool
+     * @see imap_delete()
+     */
+    public function imapDelete($mailbox, $emailIndex)
+    {
         return true;
     }
 }
 
 
-function imap_open($inbox, $username, $password){
-    return ImapMockup::$implementation->imap_open($inbox, $username, $password);
-}
-function imap_close($mailbox){
-    return ImapMockup::$implementation->imap_close($mailbox);
-}
-
-function imap_alerts(){
-    return ImapMockup::$implementation->imap_alerts();
-}
-
-function imap_errors(){
-    return ImapMockup::$implementation->imap_errors();
+/**
+ * Function call override and forwarder
+ * @param $inbox
+ * @param $username
+ * @param $password
+ * @return bool
+ * @see imap_open()
+ */
+function imap_open($inbox, $username, $password)
+{
+    return ImapMockup::$implementation->imapOpen($inbox, $username, $password);
 }
 
-function imap_getmailboxes($mailbox, $host, $folder){
-    return ImapMockup::$implementation->imap_getmailboxes($mailbox, $host, $folder);
+/**
+ * Function call override and forwarder
+ * @param $mailbox
+ * @return bool
+ * @see imap_close()
+ */
+function imap_close($mailbox)
+{
+    return ImapMockup::$implementation->imapClose($mailbox);
 }
 
-function imap_createmailbox($mailbox, $folder){
-    return ImapMockup::$implementation->imap_createmailbox($mailbox, $folder);
+/**
+ * Function call override and forwarder
+ * @return bool
+ * @see imap_alerts()
+ */
+function imap_alerts()
+{
+    return ImapMockup::$implementation->imapAlerts();
 }
 
-function imap_search($mailbox, $searchString){
-    return ImapMockup::$implementation->imap_search($mailbox, $searchString);
+/**
+ * Function call override and forwarder
+ * @return bool
+ * @see imap_errors()
+ */
+function imap_errors()
+{
+    return ImapMockup::$implementation->imapErrors();
 }
 
-function imap_fetch_overview($mailbox, $emailIndex, $options){
-    return ImapMockup::$implementation->imap_fetch_overview($mailbox, $emailIndex, $options);
+/**
+ * Function call override and forwarder
+ * @param $mailbox
+ * @param $host
+ * @param $folder
+ * @return array
+ * @see imap_getmailboxes()
+ */
+function imap_getmailboxes($mailbox, $host, $folder)
+{
+    return ImapMockup::$implementation->imapGetmailboxes($mailbox, $host, $folder);
 }
 
-function imap_fetchheader($mailbox, $emailIndex, $options){
-    return ImapMockup::$implementation->imap_fetchheader($mailbox, $emailIndex, $options);
+/**
+ * Function call override and forwarder
+ * @param $mailbox
+ * @param $folder
+ * @return bool
+ * @see imap_createmailbox()
+ */
+function imap_createmailbox($mailbox, $folder)
+{
+    return ImapMockup::$implementation->imapCreatemailbox($mailbox, $folder);
 }
 
-function imap_body($mailbox, $emailIndex){
-    return ImapMockup::$implementation->imap_body($mailbox, $emailIndex);
+/**
+ * Function call override and forwarder
+ * @param $mailbox
+ * @param $searchString
+ * @return array
+ * @see imap_search()
+ */
+function imap_search($mailbox, $searchString)
+{
+    return ImapMockup::$implementation->imapSearch($mailbox, $searchString);
 }
 
-function imap_mail_move($mailbox, $emailIndex, $processedFolder){
-    return ImapMockup::$implementation->imap_mail_move($mailbox, $emailIndex, $processedFolder);
+/**
+ * Function call override and forwarder
+ * @param $mailbox
+ * @param $emailIndex
+ * @param $options
+ * @return array
+ * @see imap_fetch_overview()
+ */
+function imap_fetch_overview($mailbox, $emailIndex, $options)
+{
+    return ImapMockup::$implementation->imapFetchOverview($mailbox, $emailIndex, $options);
 }
 
-function imap_delete($mailbox, $emailIndex){
-    return ImapMockup::$implementation->imap_delete($mailbox, $emailIndex);
+/**
+ * Function call override and forwarder
+ * @param $mailbox
+ * @param $emailIndex
+ * @param $options
+ * @return string
+ * @see imap_fetchheader()
+ */
+function imap_fetchheader($mailbox, $emailIndex, $options)
+{
+    return ImapMockup::$implementation->imapFetchheader($mailbox, $emailIndex, $options);
 }
 
+/**
+ * Function call override and forwarder
+ * @param $mailbox
+ * @param $emailIndex
+ * @return string
+ * @see imap_body()
+ */
+function imap_body($mailbox, $emailIndex)
+{
+    return ImapMockup::$implementation->imapBody($mailbox, $emailIndex);
+}
+
+/**
+ * Function call override and forwarder
+ * @param $mailbox
+ * @param $emailIndex
+ * @param $processedFolder
+ * @return bool
+ * @see imap_mail_move()
+ */
+function imap_mail_move($mailbox, $emailIndex, $processedFolder)
+{
+    return ImapMockup::$implementation->imapMailMove($mailbox, $emailIndex, $processedFolder);
+}
+
+/**
+ * Function call override and forwarder
+ * @param $mailbox
+ * @param $emailIndex
+ * @return bool
+ * @see imap_delete()
+ */
+function imap_delete($mailbox, $emailIndex)
+{
+    return ImapMockup::$implementation->imapDelete($mailbox, $emailIndex);
+}
