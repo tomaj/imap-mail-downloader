@@ -170,6 +170,8 @@ class Downloader
      * The $callback has the signature: mixed function (Email $email)
      * Return values can be:
      *      false   do not process
+     *      null (no return value specified)
+     *              do not process
      *      true    apply default process action (@see Downloader::setDefaultProcessAction())
      *      (string) ProcessAction::ACTION_MOVE
      *              override default process action, move emails using folder provided by default process action
@@ -229,60 +231,12 @@ class Downloader
                     // call user supplied callback with given email
                     $processAction = $callback($email);
 
-                    // bring returned process action into one of two formats: false or an ProcessAction object
-                    // thereby apply a meaningful transformation logic
-                    if (is_bool($processAction) and $processAction) {
-                        $processAction = $this->defaultProcessAction;
-                    } elseif (is_callable($processAction)) {
-                        $processAction = ProcessAction::callback($processAction);
-                    } elseif (is_string($processAction)) {
-                        switch ($processAction) {
-                            case ProcessAction::ACTION_MOVE:
-                                $processAction = ProcessAction::move($this->defaultProcessAction->getProcessedFolder());
-                                break;
+                    // only process email if action is not strictly false or strictly null
+                    if ($processAction !== false and $processAction !== null) {
 
-                            case ProcessAction::ACTION_DELETE:
-                                $processAction = ProcessAction::delete();
-                                break;
+                        $processAction = $this->normalizeProcessAction($processAction);
 
-                            case ProcessAction::ACTION_CALLBACK:
-                                $processAction = ProcessAction::callback($this->$this->defaultProcessedAction->getCallback());
-                                break;
-
-                            default:
-                                throw \Exception("Unexpected process action: {$processAction}");
-                        }
-                    }
-
-                    // only process if ProcessAction object, ie if not false
-                    if ($processAction instanceof ProcessAction) {
-
-                        switch ($processAction->getAction()) {
-                            case ProcessAction::ACTION_MOVE:
-                                $this->checkProcessedFolder(
-                                    $mailbox,
-                                    $processAction->getProcessedFolder(),
-                                    $this->processedFoldersAutomake
-                                );
-                                $res = imap_mail_move($mailbox, $emailIndex, $processAction->getProcessedFolder());
-                                if (!$res) {
-                                    throw new \Exception("Unexpected error: Cannot move email to ".$processAction->getProcessedFolder());
-                                    break;
-                                }
-                                break;
-
-                            case ProcessAction::ACTION_DELETE:
-                                $res = imap_delete($mailbox, $emailIndex);
-                                if (!$res) {
-                                    throw new \Exception("Unexpected error: Cannot delete email.");
-                                }
-                                break;
-
-                            case ProcessAction::ACTION_CALLBACK:
-                                call_user_func_array($processAction->getCallback(), array($mailbox, $emailIndex));
-                                break;
-                        }
-
+                        $this->processEmail($mailbox, $emailIndex, $processAction);
                     }
                 }
             }
@@ -310,6 +264,7 @@ class Downloader
      * @param $processedFolder name of folder to check and optionally create
      * @param bool $automake
      * @throws \Exception
+     * @throws ImapException
      */
     private function checkProcessedFolder($mailbox, $processedFolder, $automake = false)
     {
@@ -319,7 +274,7 @@ class Downloader
             if ($automake) {
                 $res = imap_createmailbox($mailbox, $processedFolder);
                 if (!$res) {
-                    throw new \Exception("Failed to create imap folder '{$processedFolder}'");
+                    throw new \ImapException("Failed to create imap folder '{$processedFolder}'");
                 }
             } else {
                 throw new \Exception("You need to create imap folder '{$processedFolder}'");
@@ -340,5 +295,83 @@ class Downloader
         }
         rsort($emails);
         return $emails;
+    }
+
+    /**
+     * Attempts to resolve any process action into actual ProcessAction instances
+     * @param mixed $processAction
+     * @return false|ProcessAction
+     * @throws \Exception
+     */
+    private function normalizeProcessAction($processAction)
+    {
+        // apply default process action if passed true
+        if (is_bool($processAction) and $processAction) {
+            return $this->defaultProcessAction;
+        }
+        // leave actual ProcessAction object as is
+        if ($processAction instanceof ProcessAction) {
+            return $processAction;
+        }
+        // turn pure callables into corresponding ProcessAction instances
+        if (is_callable($processAction)) {
+            return ProcessAction::callback($processAction);
+        }
+        // attempt to turn string actions into appropriate ProcessAction instances
+        // only the predefined actions are allowed.
+        if (is_string($processAction)) {
+            switch ($processAction) {
+                case ProcessAction::ACTION_MOVE:
+                    return ProcessAction::move($this->defaultProcessAction->getProcessedFolder());
+
+                case ProcessAction::ACTION_DELETE:
+                    return ProcessAction::delete();
+
+                case ProcessAction::ACTION_CALLBACK:
+                    return ProcessAction::callback($this->$this->defaultProcessedAction->getCallback());
+
+                default:
+                    throw new \Exception("Unexpected process action: {$processAction}");
+            }
+        }
+
+        throw new \Exception("Invalid process action: ".strval($processAction));
+    }
+
+    /**
+     * Apply given process action to email
+     *
+     * @param $mailbox
+     * @param $emailIndex
+     * @param ProcessAction $processAction
+     * @throws \Exception
+     */
+    private function processEmail($mailbox, $emailIndex, ProcessAction $processAction)
+    {
+        switch ($processAction->getAction()) {
+            case ProcessAction::ACTION_MOVE:
+                $this->checkProcessedFolder(
+                    $mailbox,
+                    $processAction->getProcessedFolder(),
+                    $this->processedFoldersAutomake
+                );
+                $res = imap_mail_move($mailbox, $emailIndex, $processAction->getProcessedFolder());
+                if (!$res) {
+                    throw new \ImapException("Unexpected error: Cannot move email to ".$processAction->getProcessedFolder());
+                    break;
+                }
+                break;
+
+            case ProcessAction::ACTION_DELETE:
+                $res = imap_delete($mailbox, $emailIndex);
+                if (!$res) {
+                    throw new \ImapException("Unexpected error: Cannot delete email.");
+                }
+                break;
+
+            case ProcessAction::ACTION_CALLBACK:
+                call_user_func_array($processAction->getCallback(), array($mailbox, $emailIndex));
+                break;
+        }
     }
 }
