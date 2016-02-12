@@ -53,9 +53,9 @@ class ProcessAction
     public static function createDefault($action, $processedFolder = null, $callback = null)
     {
 
-        if ($action == self::ACTION_MOVE and !is_string($processedFolder)) {
+        if ($action == ProcessAction::ACTION_MOVE and !is_string($processedFolder)) {
             throw new \Exception("Invalid processed folder for action PROCESSED_ACTION_MOVE: {$processedFolder}");
-        } elseif ($action == self::ACTION_CALLBACK and !is_callable($callback)) {
+        } elseif ($action == ProcessAction::ACTION_CALLBACK and !is_callable($callback)) {
             throw new \Exception("Invalid process callback for action PROCESSED_ACTION_CALLBACK");
         }
 
@@ -74,7 +74,7 @@ class ProcessAction
     public static function move($folder)
     {
         $processAction = new ProcessAction();
-        $processAction->action = self::ACTION_MOVE;
+        $processAction->action = ProcessAction::ACTION_MOVE;
         $processAction->processedFolder = $folder;
         return $processAction;
     }
@@ -86,7 +86,7 @@ class ProcessAction
     public static function delete()
     {
         $processAction = new ProcessAction();
-        $processAction->action = self::ACTION_DELETE;
+        $processAction->action = ProcessAction::ACTION_DELETE;
         return $processAction;
     }
 
@@ -100,7 +100,7 @@ class ProcessAction
     public static function callback($callback)
     {
         $processAction = new ProcessAction();
-        $processAction->action = self::ACTION_CALLBACK;
+        $processAction->action = ProcessAction::ACTION_CALLBACK;
         $processAction->callback = $callback;
         return $processAction;
     }
