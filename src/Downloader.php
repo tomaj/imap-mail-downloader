@@ -270,9 +270,9 @@ class Downloader
     {
         $HOST = '{' . $this->host . ':' . $this->port . '}';
         $list = imap_getmailboxes($mailbox, $HOST, $processedFolder);
-        if (count($list) == 0) {
+        if (!is_array($list) || count($list) == 0) {
             if ($automake) {
-                $res = imap_createmailbox($mailbox, $processedFolder);
+                $res = imap_createmailbox($mailbox, $HOST . $processedFolder);
                 if (!$res) {
                     throw new ImapException("Failed to create imap folder '{$processedFolder}'");
                 }
