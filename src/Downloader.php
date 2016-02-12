@@ -274,7 +274,7 @@ class Downloader
             if ($automake) {
                 $res = imap_createmailbox($mailbox, $processedFolder);
                 if (!$res) {
-                    throw new \ImapException("Failed to create imap folder '{$processedFolder}'");
+                    throw new ImapException("Failed to create imap folder '{$processedFolder}'");
                 }
             } else {
                 throw new \Exception("You need to create imap folder '{$processedFolder}'");
@@ -357,7 +357,7 @@ class Downloader
                 );
                 $res = imap_mail_move($mailbox, $emailIndex, $processAction->getProcessedFolder());
                 if (!$res) {
-                    throw new \ImapException("Unexpected error: Cannot move email to ".$processAction->getProcessedFolder());
+                    throw new ImapException("Unexpected error: Cannot move email to ".$processAction->getProcessedFolder());
                     break;
                 }
                 break;
@@ -365,7 +365,7 @@ class Downloader
             case ProcessAction::ACTION_DELETE:
                 $res = imap_delete($mailbox, $emailIndex);
                 if (!$res) {
-                    throw new \ImapException("Unexpected error: Cannot delete email.");
+                    throw new ImapException("Unexpected error: Cannot delete email.");
                 }
                 break;
 
