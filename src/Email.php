@@ -2,6 +2,10 @@
 
 namespace Tomaj\ImapMailDownloader;
 
+/**
+ * Class Email
+ * @package Tomaj\ImapMailDownloader
+ */
 class Email
 {
     private $from;
@@ -34,33 +38,37 @@ class Email
 
     private $draft;
 
+    private $headers;
+
     private $body;
 
-    public function __construct($params, $body)
+    public function __construct($overview = null, $body = null, $headers = null)
     {
-        $options = $params[0];
+        if ($overview !== null) {
+            $options = $overview[0];
 
-        $this->from = $options->from;
-        $this->to = $options->to;
-        $this->date = $options->date;
-        $this->messageId = $options->message_id;
-        if (isset($options->references)) {
-            $this->references = $options->references;
+            $this->from = $options->from;
+            $this->to = $options->to;
+            $this->date = $options->date;
+            $this->messageId = $options->message_id;
+            if (isset($options->references)) {
+                $this->references = $options->references;
+            }
+            if (isset($options->in_reply_to)) {
+                $this->inReplyTo = $options->in_reply_to;
+            }
+            $this->size = $options->size;
+            $this->uid = $options->uid;
+            $this->msgNo = $options->msgno;
+            $this->recent = $options->recent;
+            $this->flagged = $options->flagged;
+            $this->answered = $options->answered;
+            $this->deleted = $options->deleted;
+            $this->seen = $options->seen;
+            $this->draft = $options->draft;
         }
-        if (isset($options->in_reply_to)) {
-            $this->inReplyTo = $options->in_reply_to;
-        }
-        $this->size = $options->size;
-        $this->uid = $options->uid;
-        $this->msgNo = $options->msgno;
-        $this->recent = $options->recent;
-        $this->flagged = $options->flagged;
-        $this->answered = $options->answered;
-        $this->deleted = $options->deleted;
-        $this->seen = $options->seen;
-        $this->draft = $options->draft;
 
-
+        $this->headers = $headers;
         $this->body = $body;
     }
 
@@ -187,8 +195,32 @@ class Email
     /**
      * @return mixed
      */
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getBody()
     {
         return $this->body;
+    }
+
+    /**
+     * @return string
+     * @throws \Exception
+     */
+    public function getSource()
+    {
+        if ($this->headers == null) {
+            throw new \Exception("Email was not created with full headers");
+        }
+        if ($this->body == null) {
+            throw new \Exception("Email was not created with a body");
+        }
+
+        return $this->headers . $this->body;
     }
 }
