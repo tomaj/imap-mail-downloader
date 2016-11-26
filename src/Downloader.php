@@ -2,6 +2,8 @@
 
 namespace Tomaj\ImapMailDownloader;
 
+use Exception;
+
 class Downloader
 {
     private $host;
@@ -12,18 +14,19 @@ class Downloader
 
     private $password;
 
-    private $processedFolder = 'INBOX/processed';
+    private $processedFolder;
 
-    public function __construct($host, $port, $username, $password)
+    public function __construct($host, $port, $username, $password, $processedFolder = 'INBOX/processed')
     {
         if (!extension_loaded('imap')) {
-            throw new \Exception('Extension \'imap\' must be loaded');
+            throw new Exception("Extension 'imap' must be loaded");
         }
 
         $this->host = $host;
         $this->port = $port;
         $this->username = $username;
         $this->password = $password;
+        $this->processedFolder = $processedFolder;
     }
 
     public function fetch(MailCriteria $criteria, $callback)
@@ -49,7 +52,7 @@ class Downloader
                 if ($processed) {
                     $res = imap_mail_move($mailbox, $emailIndex, $this->processedFolder);
                     if (!$res) {
-                        throw new \Exception("Unexpected error: Cannot move email to ");
+                        throw new Exception("Unexpected error: Cannot move email to ");
                         break;
                     }
                 }
@@ -63,7 +66,7 @@ class Downloader
     {
         $list = imap_getmailboxes($mailbox, '{' . $this->host . '}', $this->processedFolder);
         if (count($list) == 0) {
-            throw new \Exception("You need to create imap folder '{$this->processedFolder}'");
+            throw new Exception("You need to create imap folder '{$this->processedFolder}'");
         }
     }
 
