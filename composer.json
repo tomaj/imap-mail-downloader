@@ -1,5 +1,5 @@
 {
-  "name": "tomaj/imap-mail-downloader",
+  "name": "zoldia/imap-mail-downloader",
   "description": "IMAP mail downloader",
   "type": "library",
   "license": "MIT",
