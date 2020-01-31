@@ -36,7 +36,9 @@ class Email
 
     private $body;
 
-    public function __construct($params, $body)
+    private $attachments;
+
+    public function __construct($params, $body, $attachments = array())
     {
         $options = $params[0];
 
@@ -62,6 +64,7 @@ class Email
 
 
         $this->body = $body;
+        $this->attachments = $attachments;
     }
 
     /**
@@ -190,5 +193,13 @@ class Email
     public function getBody()
     {
         return $this->body;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAttachments()
+    {
+        return $this->attachments;
     }
 }
