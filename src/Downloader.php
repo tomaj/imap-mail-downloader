@@ -44,7 +44,7 @@ class Downloader
             foreach ($emails as $emailIndex) {
                 $overview = imap_fetch_overview($mailbox, $emailIndex, 0);
                 $message = imap_body($mailbox, $emailIndex);
-                $structure = imap_fetchstructure($mailbox,$emailIndex);
+                $structure = imap_fetchstructure($mailbox, $emailIndex);
 
                 $attachments = $this->processAttachments($structure, $mailbox, $emailIndex);
 
