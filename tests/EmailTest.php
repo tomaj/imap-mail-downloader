@@ -4,7 +4,7 @@ require_once dirname(__FILE__) . '/../vendor/autoload.php';
 
 use Tomaj\ImapMailDownloader\Email;
 
-class EmailTest extends PHPUnit_Framework_TestCase
+class EmailTest extends \PHPUnit\Framework\TestCase
 {
     public function testCreationWithouOptionalAttributes()
     {

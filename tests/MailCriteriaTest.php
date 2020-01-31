@@ -4,7 +4,7 @@ require_once dirname(__FILE__) . '/../vendor/autoload.php';
 
 use Tomaj\ImapMailDownloader\MailCriteria;
 
-class MailCriteriaTest extends PHPUnit_Framework_TestCase
+class MailCriteriaTest extends \PHPUnit\Framework\TestCase
 {
     public function testDefault()
     {
